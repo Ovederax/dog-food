@@ -2,10 +2,12 @@ import { Link, Typography } from '@mui/material';
 import { colors } from '../theme/colors';
 import styled from '@emotion/styled';
 import { SvgLoader } from '../ui';
+import { MouseEventHandler } from 'react';
 
 interface Props {
 	to: string;
 	title: string;
+	onClick?: MouseEventHandler<HTMLAnchorElement>;
 }
 
 const LinkStyled = styled(Link)`
@@ -21,6 +23,7 @@ const LinkStyled = styled(Link)`
 		height: 14px;
 		fill: ${colors.text.secondary};
 	}
+
 	& > div {
 		margin-top: -2px;
 	}
@@ -32,10 +35,10 @@ const LinkStyled = styled(Link)`
 `;
 
 export const BackLink = (props: Props) => {
-	const { to, title } = props;
+	const { to, title, onClick } = props;
 
 	return (
-		<LinkStyled href={to}>
+		<LinkStyled href={to} onClick={onClick}>
 			<SvgLoader path='common/ic-left-arrow' display='inline-block' />
 			<Typography variant='p2' component='span' color={colors.text.secondary}>
 				{title}

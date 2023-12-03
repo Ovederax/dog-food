@@ -3,6 +3,7 @@ import { colors } from '../../theme/colors';
 import { PageContainer, SvgLoader } from '../../ui';
 import { Logo } from '../logo';
 import { Stack, Typography, Link, AppBar, Toolbar } from '@mui/material';
+import { Link as ReactRouterLink } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { css } from '@emotion/css';
@@ -12,7 +13,12 @@ import {
 	favoritesClassName,
 	getSizeClassName,
 	svgSize32ClassName,
-} from '../../utils/svg-styles';
+} from '../../utils';
+import { ROUTES } from '../../const/routes';
+
+const RouterLink = styled(ReactRouterLink)`
+	text-decoration: none;
+`;
 
 const Wrapper = styled.div`
 	background: ${colors.primary.main};
@@ -81,26 +87,31 @@ export const Footer = () => {
 			icon: 'common/ic-home',
 			title: 'Главная',
 			className: svgSize32ClassName,
+			path: ROUTES.home,
 		},
 		{
 			icon: 'common/ic-catalog',
 			title: 'Каталог',
 			className: svgSize32ClassName,
+			path: ROUTES.catalog,
 		},
 		{
 			icon: 'common/ic-cart',
 			title: 'Корзина',
 			className: svgSize32ClassName,
+			path: ROUTES.basket,
 		},
 		{
 			icon: 'common/ic-favorites',
 			title: 'Избранное',
 			className: `${svgSize32ClassName} ${favoritesClassName}`,
+			path: ROUTES.favorites,
 		},
 		{
 			icon: 'special/ic-profile',
 			title: 'Профиль',
 			className: getSizeClassName(32),
+			path: ROUTES.profile,
 		},
 	];
 
@@ -148,16 +159,17 @@ export const Footer = () => {
 							justifyContent='center'
 							sx={{ width: '100%' }}>
 							{buttons.map((it) => (
-								<Stack
-									key={it.title}
-									alignItems='center'
-									justifyContent='center'
-									spacing={0.5}>
-									<SvgLoader path={it.icon} className={it.className} />
-									<Typography variant='s1' color={colors.text.main}>
-										{it.title}
-									</Typography>
-								</Stack>
+								<RouterLink key={it.path} to={it.path}>
+									<Stack
+										alignItems='center'
+										justifyContent='center'
+										spacing={0.5}>
+										<SvgLoader path={it.icon} className={it.className} />
+										<Typography variant='s1' color={colors.text.main}>
+											{it.title}
+										</Typography>
+									</Stack>
+								</RouterLink>
 							))}
 						</Stack>
 					</Toolbar>

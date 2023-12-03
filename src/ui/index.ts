@@ -7,3 +7,5 @@ export * from './button';
 export * from './basic-select';
 export * from './pagination';
 export * from './spinner';
+export * from './selector';
+export * from './search';

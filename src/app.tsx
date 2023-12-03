@@ -1,14 +1,22 @@
 import './style.css';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { Catalog } from './routes/catalog';
+import {
+	RouterProvider,
+	createBrowserRouter,
+	Navigate,
+} from 'react-router-dom';
 import { Layout } from './ui';
 import { ThemeProvider } from '@mui/material';
 import { theme } from './theme/theme';
-import { DataProvider } from './_data/data-provider';
-
-const routes = {
-	catalog: '/',
-};
+import { DataProvider } from './providers/data-provider';
+import {
+	Favorites,
+	Catalog,
+	ItemPage,
+	Profile,
+	NotFoundPage,
+	ROUTES,
+} from './routes';
+import { UserProfileProvider } from './providers/user-provider';
 
 const router = createBrowserRouter([
 	{
@@ -16,8 +24,28 @@ const router = createBrowserRouter([
 		element: <Layout />,
 		children: [
 			{
-				path: routes.catalog,
+				path: '/',
+				element: <Navigate to={ROUTES.catalog} replace />,
+			},
+			{
+				path: ROUTES.catalog,
 				element: <Catalog />,
+			},
+			{
+				path: ROUTES.card,
+				element: <ItemPage />,
+			},
+			{
+				path: ROUTES.profile,
+				element: <Profile />,
+			},
+			{
+				path: ROUTES.favorites,
+				element: <Favorites />,
+			},
+			{
+				path: '*',
+				element: <NotFoundPage />,
 			},
 		],
 	},
@@ -25,10 +53,12 @@ const router = createBrowserRouter([
 
 export const App = () => {
 	return (
-		<DataProvider>
-			<ThemeProvider theme={theme}>
-				<RouterProvider router={router} />
-			</ThemeProvider>
-		</DataProvider>
+		<UserProfileProvider>
+			<DataProvider>
+				<ThemeProvider theme={theme}>
+					<RouterProvider router={router} />
+				</ThemeProvider>
+			</DataProvider>
+		</UserProfileProvider>
 	);
 };

@@ -1,12 +1,14 @@
 import styled from '@emotion/styled';
 import Stack from '@mui/material/Stack';
-import { Logo, Search } from '.';
-import { colors } from '../theme/colors';
-import { PageContainer, SvgLoader } from '../ui';
+import { Logo } from '../logo';
+import { colors } from '../../theme/colors';
+import { PageContainer, SvgLoader, Search } from '../../ui';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useDataContext } from '../_data/data-provider';
-import { favoritesClassName } from '../utils/svg-styles';
+import { useDataContext } from '../../providers/data-provider';
+import { favoritesClassName } from '../../utils';
+import { Link } from 'react-router-dom';
+import { ROUTES } from '../../routes';
 
 const Wrapper = styled.div`
 	background: ${colors.primary.main};
@@ -24,6 +26,15 @@ const Container = styled(PageContainer)`
 	justify-content: space-between;
 	align-items: center;
 `;
+
+const SvgLink = (props: { to: string; path: string; className?: string }) => {
+	const { to, path, className } = props;
+	return (
+		<Link to={to}>
+			<SvgLoader path={path} className={className} />
+		</Link>
+	);
+};
 
 export const Header = () => {
 	const theme = useTheme();
@@ -53,12 +64,13 @@ export const Header = () => {
 				<Search value={searchValue} onChange={handelChangeSearch} />
 
 				<Stack direction='row' spacing={4.25}>
-					<SvgLoader
+					<SvgLink
+						to={ROUTES.favorites}
 						path='common/ic-favorites'
 						className={favoritesClassName}
 					/>
-					<SvgLoader path='common/ic-cart' />
-					<SvgLoader path='special/ic-profile' />
+					<SvgLink to={ROUTES.basket} path='common/ic-cart' />
+					<SvgLink to={ROUTES.profile} path='special/ic-profile' />
 				</Stack>
 			</Container>
 		</Wrapper>

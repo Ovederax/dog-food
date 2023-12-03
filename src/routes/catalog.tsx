@@ -1,9 +1,12 @@
-import { CardList } from '../components';
-import { BackLink, CardsSort, Spinner } from '../ui';
+import { CardList, PageHeader } from '../components';
+import { CardsSort, Spinner } from '../ui';
 import { Stack, Typography } from '@mui/material';
-import { useDataContext } from '../_data/data-provider';
+import { useDataContext } from '../providers/data-provider';
 import styled from '@emotion/styled';
-import { NotFoundProducts } from '../components/not-found-products';
+import { NotFound } from '../components/not-found';
+import { FavButton } from '../components/fav-button';
+import { useUserProfileContext } from '../providers/user-provider';
+import { CardItemData } from '../_data/card-list-data';
 
 const ExtraBold = styled.span`
 	font-weight: 800;
@@ -20,6 +23,8 @@ export const Catalog = () => {
 		handleChangeSortType,
 		searchValue,
 	} = useDataContext();
+
+	const { userId } = useUserProfileContext();
 
 	if (loading) {
 		return (
@@ -39,17 +44,27 @@ export const Catalog = () => {
 						{` найдено ${cardListData.length} товаров`}
 					</Typography>
 				)}
-				<NotFoundProducts />
+				<NotFound text='Простите, по вашему запросу товаров не надено.' />
 			</Stack>
 		);
 	}
 
+	const renderFavButton = (cardData: CardItemData) => {
+		const toggleFav = () => {
+			// TODO
+		};
+		return (
+			<FavButton
+				icon='common/ic-favorites'
+				onClick={toggleFav}
+				redFill={cardData.likes.some((it) => it === userId)}
+			/>
+		);
+	};
+
 	return (
 		<>
-			<Stack spacing={0.25}>
-				<BackLink to='/' title='Главная' />
-				<Typography variant='h1'>Каталог</Typography>
-			</Stack>
+			<PageHeader to='/' backLabel='Главная' title='Каталог' />
 
 			{searchValue.trim() && (
 				<Typography variant='h1' mt={2.5} fontWeight={300}>
@@ -68,6 +83,7 @@ export const Catalog = () => {
 				handleChangePage={handleChangePage}
 				page={page}
 				pageCount={pageCount}
+				renderFavButton={renderFavButton}
 			/>
 		</>
 	);

@@ -1,4 +1,7 @@
-import { Option } from '../ui';
+interface Option<T = string> {
+	id: T;
+	title: string;
+}
 
 export enum SortType {
 	Popular = '1',

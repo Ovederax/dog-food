@@ -2,28 +2,11 @@ import styled from '@emotion/styled';
 import { colors } from '../theme/colors';
 import { Stack, Typography, Box } from '@mui/material';
 import { CardItemData } from '../_data/card-list-data';
-import { SvgLoader, Button } from '../ui';
-import { useState } from 'react';
-
-const CardBadge = styled.div`
-	position: absolute;
-	top: 0;
-	left: 0;
-	color: ${colors.text.white};
-	background: ${colors.custom.red};
-	padding: 2px 8px;
-
-	font-size: 1rem;
-	line-height: 1.25rem;
-	font-weight: 800;
-
-	border-radius: 20px;
-	min-height: 24px;
-	min-width: 58px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-`;
+import { Link, useLocation } from 'react-router-dom';
+import { getURLForCard } from '../const/routes';
+import { formatPrice } from '../utils';
+import { CardBadge } from './card-badge';
+import { Button } from '../ui';
 
 const Container = styled.div`
 	position: relative;
@@ -41,47 +24,29 @@ const Image = styled.img`
 	background: #ddd;
 `;
 
-const FavButton = styled('div')<{ inFav: boolean }>(({ inFav }) => {
-	const base = `
-    position: absolute;
-    top: 0;
-    right: 0;
-    & svg path {
-      cursor: pointer;
-    }
-    & svg path:last-child {
-      fill: ${inFav ? colors.custom.red : 'transparent'};
-    }
-  `;
-
-	if (inFav) {
-		return `
-      ${base}
-      & svg path {
-        fill: ${colors.custom.red};
-      }
-    `;
-	}
-
-	return base;
-});
-
 const Filler = styled.div`
 	height: 14px;
 `;
 
-const formatPrice = (value: number) => {
-	return `${value} ₽`;
+const TitleLinkStyled = styled(Link)`
+	color: ${colors.text.main};
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+`;
+
+type Props = CardItemData & {
+	renderFavButton?: ((cardData: CardItemData) => React.ReactNode) | undefined;
 };
 
-export const Card = (props: CardItemData) => {
-	const { discount, price, name, wight, pictures } = props;
+export const Card = (props: Props) => {
+	const { _id, discount, price, name, wight, pictures, renderFavButton } =
+		props;
 
-	const [inFav, setInFav] = useState(false);
-
-	const toggleFav = () => {
-		setInFav((prev) => !prev);
-	};
+	const location = useLocation();
+	const linkState = { location };
 
 	const firstPrice = price + (price * discount) / 100;
 
@@ -89,9 +54,7 @@ export const Card = (props: CardItemData) => {
 		<Container>
 			<Box>
 				{discount ? <CardBadge>-{discount}%</CardBadge> : null}
-				<FavButton onClick={toggleFav} inFav={inFav}>
-					<SvgLoader path='common/ic-favorites' alt='DogFood' />
-				</FavButton>
+				{renderFavButton ? renderFavButton(props) : null}
 
 				<Image src={pictures} />
 
@@ -114,7 +77,9 @@ export const Card = (props: CardItemData) => {
 
 					<Stack spacing={0.25}>
 						<Typography variant='s1'>{wight}</Typography>
-						<Typography variant='p1'>{name}</Typography>
+						<TitleLinkStyled to={getURLForCard(_id)} state={linkState}>
+							<Typography variant='p1'>{name}</Typography>
+						</TitleLinkStyled>
 					</Stack>
 				</Stack>
 			</Box>

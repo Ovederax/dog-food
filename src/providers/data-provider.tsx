@@ -1,9 +1,7 @@
 import React, { createContext, useContext } from 'react';
-import { useCardsData } from './use-cards-data';
-import { SortType } from './sort';
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
+import { useCardsData } from '../_data/use-cards-data';
+import { SortType } from '../_data/sort';
+import { noop } from '../utils/noop';
 
 const defaultValue = {
 	cardListData: [],

@@ -2,7 +2,7 @@ import { Grid, Box } from '@mui/material';
 import { Card } from './card';
 import { Pagination } from '../ui';
 import { CardItemData } from '../_data/card-list-data';
-import { ChangeEvent } from 'react';
+import React, { ChangeEvent } from 'react';
 
 interface Props {
 	mt?: number;
@@ -11,14 +11,23 @@ interface Props {
 	page: number;
 	pageCount: number;
 	handleChangePage: (event: ChangeEvent<unknown>, page: number) => void;
+	renderFavButton?: (cardData: CardItemData) => React.ReactNode;
 }
 
 export const CardList = (props: Props) => {
-	const { mt, mb, cardListData, page, handleChangePage, pageCount } = props;
+	const {
+		mt,
+		mb,
+		cardListData,
+		page,
+		handleChangePage,
+		pageCount,
+		renderFavButton,
+	} = props;
 
 	const elements = cardListData.map((it) => (
 		<Grid key={it._id} item xs={6} sm={4} md={3} lg={3}>
-			<Card {...it} />
+			<Card {...it} renderFavButton={renderFavButton} />
 		</Grid>
 	));
 

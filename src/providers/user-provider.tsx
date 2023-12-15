@@ -1,7 +1,10 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useLayoutEffect } from 'react';
+import { useActions, useAppSelector } from '../store/hooks/hooks';
+import { getUser } from '../store/selectors/selectors';
+import { Spinner } from '../ui';
 
 const defaultValue = {
-	userId: '640cc43aaa397121838db691',
+	userId: '',
 };
 
 type ContextType = {
@@ -17,8 +20,23 @@ interface Props {
 }
 
 export const UserProfileProvider = (props: Props) => {
+	const { loading, error, userData } = useAppSelector(getUser);
+	const { fetchMe } = useActions();
+
+	useLayoutEffect(() => {
+		fetchMe();
+	}, [fetchMe]);
+
+	if (loading || (!userData && !error)) {
+		return <Spinner />;
+	}
+
+	if (error || !userData) {
+		return <>Error</>;
+	}
+
 	const value: ContextType = {
-		userId: defaultValue.userId,
+		userId: userData._id,
 	};
 
 	return (

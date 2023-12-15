@@ -33,7 +33,7 @@ const paginationSX = {
 		alignItems: 'center',
 		border: `1px solid ${colors.text.outline}`,
 	},
-	'& ul li:first-child': {
+	'& ul li:first-of-type': {
 		marginRight: 'auto',
 	},
 	'& ul li:last-child': {

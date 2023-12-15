@@ -1,10 +1,9 @@
-import { useParams } from 'react-router-dom';
-import { cardListData } from '../../_data/card-list-data';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ItemPageHeader } from './item-page-header';
 import styled from '@emotion/styled';
 import { Stack, Typography, Box } from '@mui/material';
-import { Button, Selector, SvgLoader } from '../../ui';
-import { useState } from 'react';
+import { Button, Selector, Spinner, SvgLoader } from '../../ui';
+import { useLayoutEffect, useState } from 'react';
 import { css } from '@emotion/css';
 import { colors } from '../../theme/colors';
 import { formatPrice } from '../../utils';
@@ -13,6 +12,13 @@ import { ItemInfoBlock } from './item-info-block';
 import { ItemBlock } from './item-block';
 import { PropertiesTable } from './properties-table';
 import { CardBadge } from '../../components/card-badge';
+import { useSelector } from 'react-redux';
+import { getProduct } from '../../store/selectors/selectors';
+import { useActions } from '../../store/hooks/hooks';
+import { Review } from '../../store/api/types';
+import ReviewItem from './review-item';
+import { useUserProfileContext } from '../../providers/user-provider';
+import { getURLForProductAddReview } from '../../const/routes';
 
 export const favoritesClassName = css`
 	& svg path:first-child {
@@ -33,18 +39,36 @@ export const ItemPage = () => {
 
 	const [count, setCount] = useState(0);
 
-	const cardData = cardListData.find((it) => it._id === id);
+	const { product, loading, error } = useSelector(getProduct);
+	const { getProductById } = useActions();
+	const { userId } = useUserProfileContext();
 
-	if (!cardData) {
-		return <>Nothing to show</>;
+	const navigate = useNavigate();
+
+	useLayoutEffect(() => {
+		if (id) {
+			getProductById(id);
+		}
+	}, [getProductById, id]);
+
+	const onAddReview = () => {
+		navigate(getURLForProductAddReview(id || ''));
+	};
+
+	if (loading || (!product && !error)) {
+		return <Spinner />;
 	}
 
-	const { price, discount, description, pictures } = cardData;
+	if (error || !product) {
+		return <>Error</>;
+	}
+
+	const { price, discount, description, pictures } = product;
 	const firstPrice = price + (price * discount) / 100;
 
 	return (
 		<>
-			<ItemPageHeader cardData={cardData} />
+			<ItemPageHeader cardData={product} />
 
 			<Stack
 				direction='row'
@@ -108,6 +132,20 @@ export const ItemPage = () => {
 				</ItemBlock>
 				<ItemBlock title='Характеристики'>
 					<PropertiesTable />
+				</ItemBlock>
+				<ItemBlock title='Отзывы'>
+					{!product.reviews.some((it: Review) => it.author._id === userId) && (
+						<Button onClick={onAddReview} sx={{ alignSelf: 'flex-start' }}>
+							Добавить отзыв
+						</Button>
+					)}
+					{product.reviews
+						.concat()
+						.reverse()
+						.slice(0, 3)
+						.map((it: Review) => (
+							<ReviewItem key={it._id} {...it} />
+						))}
 				</ItemBlock>
 			</Stack>
 		</>

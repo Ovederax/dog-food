@@ -1,12 +1,13 @@
 import { CardList, PageHeader } from '../components';
 import { CardsSort, Spinner } from '../ui';
 import { Stack, Typography } from '@mui/material';
-import { useDataContext } from '../providers/data-provider';
 import styled from '@emotion/styled';
 import { NotFound } from '../components/not-found';
 import { FavButton } from '../components/fav-button';
 import { useUserProfileContext } from '../providers/user-provider';
-import { CardItemData } from '../_data/card-list-data';
+import { useProductsData } from '../_data/use-products-data';
+import { Product } from '../store/api/types';
+import { useActions } from '../store/hooks/hooks';
 
 const ExtraBold = styled.span`
 	font-weight: 800;
@@ -14,34 +15,37 @@ const ExtraBold = styled.span`
 
 export const Catalog = () => {
 	const {
-		cardListData,
+		products,
+		error,
+		loading,
 		page,
 		handleChangePage,
 		pageCount,
-		loading,
 		sortType,
 		handleChangeSortType,
 		searchValue,
-	} = useDataContext();
+	} = useProductsData();
 
 	const { userId } = useUserProfileContext();
 
-	if (loading) {
-		return (
-			<>
-				<Spinner />
-			</>
-		);
+	const { addToFavorites, deleteFromFavorites } = useActions();
+
+	if (loading || (!products && !error)) {
+		return <Spinner />;
 	}
 
-	if (cardListData.length === 0) {
+	if (error || !products) {
+		return <>Error</>;
+	}
+
+	if (products.length === 0) {
 		return (
 			<Stack spacing={2.5}>
 				{searchValue.trim() && (
 					<Typography variant='h1' mt={2.5} fontWeight={300}>
 						{'По запросу '}
 						<ExtraBold>{searchValue}</ExtraBold>
-						{` найдено ${cardListData.length} товаров`}
+						{` найдено ${products.length} товаров`}
 					</Typography>
 				)}
 				<NotFound text='Простите, по вашему запросу товаров не надено.' />
@@ -49,15 +53,21 @@ export const Catalog = () => {
 		);
 	}
 
-	const renderFavButton = (cardData: CardItemData) => {
+	const renderFavButton = (product: Product) => {
+		const isLike = product.likes.some((it) => it === userId);
+
 		const toggleFav = () => {
-			// TODO
+			if (isLike) {
+				deleteFromFavorites(product._id);
+			} else {
+				addToFavorites(product._id);
+			}
 		};
 		return (
 			<FavButton
 				icon='common/ic-favorites'
 				onClick={toggleFav}
-				redFill={cardData.likes.some((it) => it === userId)}
+				redFill={isLike}
 			/>
 		);
 	};
@@ -70,7 +80,7 @@ export const Catalog = () => {
 				<Typography variant='h1' mt={2.5} fontWeight={300}>
 					{'По запросу '}
 					<ExtraBold>{searchValue}</ExtraBold>
-					{` найдено ${cardListData.length} товаров`}
+					{` найдено ${products.length} товаров`}
 				</Typography>
 			)}
 
@@ -79,7 +89,7 @@ export const Catalog = () => {
 			<CardList
 				mt={5}
 				mb={2.5}
-				cardListData={cardListData}
+				products={products}
 				handleChangePage={handleChangePage}
 				page={page}
 				pageCount={pageCount}

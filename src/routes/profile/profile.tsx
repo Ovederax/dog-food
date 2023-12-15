@@ -1,27 +1,31 @@
-import { Box, Stack, Typography } from '@mui/material';
-import { Button } from '../../ui';
-import { ProfileLine } from './profile-line';
+import { Spinner } from '../../ui';
+import { useActions, useAppSelector } from '../../store/hooks/hooks';
+import { getUser } from '../../store/selectors/selectors';
+import { useLayoutEffect } from 'react';
+import ViewProfile from './view-profile';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../const/routes';
 
 export const Profile = () => {
-	return (
-		<>
-			<Typography variant='h1'>Профиль</Typography>
+	const { loading, error, userData } = useAppSelector(getUser);
+	const { fetchMe } = useActions();
+	const navigate = useNavigate();
 
-			<Typography variant='h3' mt={2.5}>
-				Александр Суворов
-			</Typography>
-			<Stack spacing={0.5} mt={1}>
-				<ProfileLine icon='common/ic-phone' text='+7 (977) 980-12-09' />
-				<ProfileLine icon='common/ic-mail' text='alexander@mail.com' />
-			</Stack>
+	const toEditMode = () => {
+		navigate(ROUTES.editProfile);
+	};
 
-			<Box mt={3}>
-				<Button variant='outlined'>Изменить</Button>
-			</Box>
+	useLayoutEffect(() => {
+		fetchMe();
+	}, [fetchMe]);
 
-			<Box mt={5}>
-				<Button variant='outlined'>Выйти</Button>
-			</Box>
-		</>
-	);
+	if (loading || (!userData && !error)) {
+		return <Spinner />;
+	}
+
+	if (error || !userData) {
+		return <>Error</>;
+	}
+
+	return <ViewProfile userData={userData} toEditMode={toEditMode} />;
 };

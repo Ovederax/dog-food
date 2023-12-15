@@ -4,12 +4,16 @@ import { FavButton } from '../components/fav-button';
 import { useUserProfileContext } from '../providers/user-provider';
 import { useState } from 'react';
 import { NotFound } from '../components/not-found';
+import { useActions } from '../store/hooks/hooks';
+import { Product } from '../store/api/types';
 
 const PAGE_SIZE = 12;
 
 export const Favorites = () => {
 	const { userId } = useUserProfileContext();
 	const [page, setPage] = useState(1);
+
+	const { deleteFromFavorites } = useActions();
 
 	const data = cardListData.filter((card) =>
 		card.likes.some((it) => it === userId)
@@ -24,9 +28,9 @@ export const Favorites = () => {
 
 	const slicedData = data.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-	const renderFavButton = () => {
+	const renderFavButton = (product: Product) => {
 		const toggleFav = () => {
-			// TODO
+			deleteFromFavorites(product._id);
 		};
 		return <FavButton icon='common/ic-trash' onClick={toggleFav} />;
 	};
@@ -50,7 +54,7 @@ export const Favorites = () => {
 			<CardList
 				mt={5}
 				mb={2.5}
-				cardListData={slicedData}
+				products={[]}
 				handleChangePage={handleChangePage}
 				page={page}
 				pageCount={Math.ceil(data.length / PAGE_SIZE)}

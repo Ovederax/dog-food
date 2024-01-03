@@ -7,6 +7,8 @@ export const ROUTES = {
 	productAddReview: '/items/:productId/add-review',
 	profile: '/profile',
 	editProfile: '/edit-profile',
+	signIn: '/sign-in',
+	signUp: '/sign-up',
 };
 
 export const getURLForCard = (id: string) => {

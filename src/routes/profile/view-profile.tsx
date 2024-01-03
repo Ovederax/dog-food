@@ -5,6 +5,7 @@ import { Button } from '../../ui';
 import { User } from '../../store/api/types';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../const/routes';
+import { useActions } from '../../store/hooks/hooks';
 
 interface Props {
 	userData: User;
@@ -14,11 +15,12 @@ interface Props {
 const ViewProfile = (props: Props) => {
 	const { userData, toEditMode } = props;
 
+	const { clearUser } = useActions();
 	const navigate = useNavigate();
 
 	const onExit = () => {
-		// TODO Logout
-		navigate(ROUTES.home);
+		clearUser();
+		navigate(ROUTES.signIn);
 	};
 
 	return (

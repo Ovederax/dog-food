@@ -1,9 +1,9 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { ItemPageHeader } from './item-page-header';
 import styled from '@emotion/styled';
-import { Stack, Typography, Box } from '@mui/material';
-import { Button, Selector, Spinner, SvgLoader } from '../../ui';
-import { useLayoutEffect, useState } from 'react';
+import { Box, Stack, Typography } from '@mui/material';
+import { Button, Selector, SvgLoader } from '../../ui';
+import { useState } from 'react';
 import { css } from '@emotion/css';
 import { colors } from '../../theme/colors';
 import { formatPrice } from '../../utils';
@@ -12,13 +12,13 @@ import { ItemInfoBlock } from './item-info-block';
 import { ItemBlock } from './item-block';
 import { PropertiesTable } from './properties-table';
 import { CardBadge } from '../../components/card-badge';
-import { useSelector } from 'react-redux';
-import { getProduct } from '../../store/selectors/selectors';
-import { useActions } from '../../store/hooks/hooks';
-import { Review } from '../../store/api/types';
+import { getUserId } from '../../store/selectors/selectors';
+import { useAppSelector } from '../../store/hooks/hooks';
+import { Product, Review } from '../../store/api/types';
 import ReviewItem from './review-item';
-import { useUserProfileContext } from '../../providers/user-provider';
 import { getURLForProductAddReview } from '../../const/routes';
+import { useGetProductByIdQuery } from '../../store/api/productsApi';
+import { withQuery } from '../../utils/hoc/withQuery';
 
 export const favoritesClassName = css`
 	& svg path:first-child {
@@ -34,33 +34,25 @@ const Image = styled.img`
 	background: #ddd;
 `;
 
-export const ItemPage = () => {
-	const { id } = useParams();
+interface ItemProps {
+	id: string;
+	product: Product | undefined;
+}
+
+const Item = (props: ItemProps) => {
+	const { id, product } = props;
 
 	const [count, setCount] = useState(0);
-
-	const { product, loading, error } = useSelector(getProduct);
-	const { getProductById } = useActions();
-	const { userId } = useUserProfileContext();
+	const userId = useAppSelector(getUserId);
 
 	const navigate = useNavigate();
-
-	useLayoutEffect(() => {
-		if (id) {
-			getProductById(id);
-		}
-	}, [getProductById, id]);
 
 	const onAddReview = () => {
 		navigate(getURLForProductAddReview(id || ''));
 	};
 
-	if (loading || (!product && !error)) {
-		return <Spinner />;
-	}
-
-	if (error || !product) {
-		return <>Error</>;
+	if (!product) {
+		return null;
 	}
 
 	const { price, discount, description, pictures } = product;
@@ -149,5 +141,26 @@ export const ItemPage = () => {
 				</ItemBlock>
 			</Stack>
 		</>
+	);
+};
+
+const ItemWithQuery = withQuery(Item);
+
+export const ItemPage = () => {
+	const { id = '' } = useParams();
+
+	const { data, error, isLoading, isError, refetch } = useGetProductByIdQuery({
+		productId: id,
+	});
+
+	return (
+		<ItemWithQuery
+			product={data}
+			id={id}
+			isLoading={isLoading}
+			error={error}
+			isError={isError}
+			refetch={refetch}
+		/>
 	);
 };

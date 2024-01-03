@@ -5,16 +5,16 @@ import { ROUTES } from '../../const/routes';
 import { colors } from '../../theme/colors';
 import { Stars } from './stars';
 import styled from '@emotion/styled';
-import { CardItemData } from '../../_data/card-list-data';
 import { pluralize } from '../../utils';
 import { MouseEventHandler } from 'react';
+import { Product } from '../../store/api/types';
 
 const StyledSpan = styled.span`
 	color: ${colors.text.secondary};
 `;
 
 interface Props {
-	cardData: CardItemData;
+	cardData: Product;
 }
 
 export const ItemPageHeader = (props: Props) => {
@@ -37,7 +37,7 @@ export const ItemPageHeader = (props: Props) => {
 	};
 
 	return (
-		<Stack spacing={0.25}>
+		<Stack spacing={0.25} alignItems='flex-start'>
 			<BackLink to='/' title='Назад' onClick={onClick} />
 			<Typography variant='h1'>{cardData.name}</Typography>
 			<Stack direction='row' spacing={2}>

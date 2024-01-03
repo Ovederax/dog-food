@@ -23,7 +23,7 @@ const Container = styled('div')<{ redFill: boolean }>(({ redFill }) => {
 
 	return `
 		${base}
-		& svg path:first-child {
+		& svg path:first-of-type {
 		  fill: ${colors.text.secondary};
 		}
 		& svg path:last-child {

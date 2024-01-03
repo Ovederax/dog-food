@@ -7,7 +7,6 @@ import {
 import { Layout } from './ui';
 import { ThemeProvider } from '@mui/material';
 import { theme } from './theme/theme';
-import { DataProvider } from './providers/data-provider';
 import {
 	Favorites,
 	Catalog,
@@ -17,6 +16,10 @@ import {
 	ROUTES,
 } from './routes';
 import { UserProfileProvider } from './providers/user-provider';
+import { store } from './store/store';
+import { Provider } from 'react-redux';
+import EditProfilePage from './routes/profile/edit-profile-page';
+import AddReview from './routes/review/add-review';
 
 const router = createBrowserRouter([
 	{
@@ -36,8 +39,16 @@ const router = createBrowserRouter([
 				element: <ItemPage />,
 			},
 			{
+				path: ROUTES.productAddReview,
+				element: <AddReview />,
+			},
+			{
 				path: ROUTES.profile,
 				element: <Profile />,
+			},
+			{
+				path: ROUTES.editProfile,
+				element: <EditProfilePage />,
 			},
 			{
 				path: ROUTES.favorites,
@@ -53,12 +64,12 @@ const router = createBrowserRouter([
 
 export const App = () => {
 	return (
-		<UserProfileProvider>
-			<DataProvider>
+		<Provider store={store}>
+			<UserProfileProvider>
 				<ThemeProvider theme={theme}>
 					<RouterProvider router={router} />
 				</ThemeProvider>
-			</DataProvider>
-		</UserProfileProvider>
+			</UserProfileProvider>
+		</Provider>
 	);
 };

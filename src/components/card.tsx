@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 import { colors } from '../theme/colors';
 import { Stack, Typography, Box } from '@mui/material';
-import { CardItemData } from '../_data/card-list-data';
 import { Link, useLocation } from 'react-router-dom';
 import { getURLForCard } from '../const/routes';
 import { formatPrice } from '../utils';
 import { CardBadge } from './card-badge';
 import { Button } from '../ui';
+import { Product } from '../store/api/types';
 
 const Container = styled.div`
 	position: relative;
@@ -37,8 +37,8 @@ const TitleLinkStyled = styled(Link)`
 	}
 `;
 
-type Props = CardItemData & {
-	renderFavButton?: ((cardData: CardItemData) => React.ReactNode) | undefined;
+type Props = Product & {
+	renderFavButton?: ((cardData: Product) => React.ReactNode) | undefined;
 };
 
 export const Card = (props: Props) => {

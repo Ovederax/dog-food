@@ -5,10 +5,10 @@ import { colors } from '../../theme/colors';
 import { PageContainer, SvgLoader, Search } from '../../ui';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useDataContext } from '../../providers/data-provider';
 import { favoritesClassName } from '../../utils';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../routes';
+import { useProductsData } from '../../_data/use-products-data';
 
 const Wrapper = styled.div`
 	background: ${colors.primary.main};
@@ -40,7 +40,7 @@ export const Header = () => {
 	const theme = useTheme();
 	const matchesDownMD = useMediaQuery(theme.breakpoints.down('md'));
 
-	const { searchValue, handelChangeSearch } = useDataContext();
+	const { searchValue, handelChangeSearch } = useProductsData();
 
 	if (matchesDownMD) {
 		return (

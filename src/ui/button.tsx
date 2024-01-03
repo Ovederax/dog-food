@@ -7,12 +7,14 @@ interface Props {
 	variant?: 'outlined' | 'contained';
 	sx?: SxProps<Theme>;
 	onClick?: () => void;
+	type?: 'submit';
 }
 
 type ButtonStyledProps = Pick<Props, 'variant'>;
 
 const ButtonStyled = styled(MuiButton)<ButtonStyledProps>(
 	({ variant }: ButtonStyledProps) => `
+		display: block;
 		${variant === 'contained' ? `background: ${colors.primary.main};` : ''}
 		border-color: ${colors.text.outline};
 		color: ${colors.text.main};
@@ -33,9 +35,9 @@ const ButtonStyled = styled(MuiButton)<ButtonStyledProps>(
 );
 
 export const Button = (props: Props) => {
-	const { children, variant = 'contained', sx, onClick } = props;
+	const { children, variant = 'contained', sx, onClick, type } = props;
 	return (
-		<ButtonStyled variant={variant} sx={sx} onClick={onClick}>
+		<ButtonStyled variant={variant} sx={sx} onClick={onClick} type={type}>
 			{children}
 		</ButtonStyled>
 	);

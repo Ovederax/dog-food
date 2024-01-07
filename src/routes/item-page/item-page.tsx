@@ -149,7 +149,7 @@ const ItemWithQuery = withQuery(Item);
 export const ItemPage = () => {
 	const { id = '' } = useParams();
 
-	const { data, error, isLoading, isError, refetch } = useGetProductByIdQuery({
+	const { data, error, isFetching, isError, refetch } = useGetProductByIdQuery({
 		productId: id,
 	});
 
@@ -157,7 +157,7 @@ export const ItemPage = () => {
 		<ItemWithQuery
 			product={data}
 			id={id}
-			isLoading={isLoading}
+			isLoading={isFetching}
 			error={error}
 			isError={isError}
 			refetch={refetch}

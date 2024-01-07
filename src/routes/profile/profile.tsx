@@ -6,7 +6,7 @@ import { QueryComponent } from '../../utils/hoc/withQuery';
 import React from 'react';
 
 export const Profile = () => {
-	const { data, error, isLoading, isError, refetch } = useFetchMeQuery();
+	const { data, error, isFetching, isError, refetch } = useFetchMeQuery();
 
 	const navigate = useNavigate();
 
@@ -14,10 +14,10 @@ export const Profile = () => {
 		navigate(ROUTES.editProfile);
 	};
 
-	if (isError || isLoading || !data) {
+	if (isError || isFetching || !data) {
 		return (
 			<QueryComponent
-				isLoading={isLoading}
+				isLoading={isFetching}
 				isError={isError}
 				refetch={refetch}
 				error={error}

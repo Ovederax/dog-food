@@ -13,20 +13,25 @@ import { QueryComponent } from '../../utils/hoc/withQuery';
 import React from 'react';
 import FoundProducts from './found-products';
 import { FavoriteProductCache } from '../../store/slices/favorites-cache-slice';
+import { LoadMore } from '../../ui/load-more';
 
 export const Catalog = () => {
 	const {
 		products,
 		isError,
 		error,
-		loading,
+		isLoading,
+		isFetching,
 		refetch,
 		page,
 		handleChangePage,
 		pageCount,
 		sortType,
 		handleChangeSortType,
+		totalCount,
 		searchValue,
+		isEndOfList,
+		loadMoreProducts,
 	} = useProductsData();
 
 	const { addToFavorites, removeFromFavorite } = useActions();
@@ -37,10 +42,10 @@ export const Catalog = () => {
 	const [addToFavoritesRequestFn] = useAddToFavoritesMutation();
 	const [deleteToFavoritesRequestFn] = useDeleteFromFavoritesMutation();
 
-	if (isError || loading) {
+	if (isError || isLoading) {
 		return (
 			<QueryComponent
-				isLoading={loading}
+				isLoading={isLoading}
 				isError={isError}
 				refetch={refetch}
 				error={error}
@@ -85,7 +90,7 @@ export const Catalog = () => {
 		<>
 			<PageHeader to='/' backLabel='Главная' title='Каталог' />
 
-			<FoundProducts searchValue={searchValue} count={products.length} />
+			<FoundProducts searchValue={searchValue} count={totalCount} />
 
 			<CardsSort sortType={sortType} setSortType={handleChangeSortType} />
 
@@ -97,6 +102,12 @@ export const Catalog = () => {
 				page={page}
 				pageCount={pageCount}
 				renderFavButton={renderFavButton}
+			/>
+
+			<LoadMore
+				isLoading={isFetching}
+				action={loadMoreProducts}
+				isEndOfList={isEndOfList}
 			/>
 		</>
 	);

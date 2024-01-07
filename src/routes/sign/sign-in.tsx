@@ -53,7 +53,9 @@ export const SignIn = () => {
 
 			const hasRedirectPath =
 				objectHasProperty(state, 'from') && typeof state.from === 'string';
-			const redirectPath = hasRedirectPath ? state.from : '/items';
+			const redirectPath = hasRedirectPath
+				? state.from + (state.search || '')
+				: '/items';
 
 			navigate(redirectPath);
 		} catch (error) {

@@ -10,3 +10,5 @@ export const getFavoritesCache = (state: RootState) =>
 export const getProduct = (state: RootState) => state.product;
 
 export const getAccessToken = (state: RootState) => state.user.accessToken;
+
+export const getSearchParams = (state: RootState) => state.searchParams;

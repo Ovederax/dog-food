@@ -14,6 +14,7 @@ export const PrivateLayout = () => {
 				to={ROUTES.signIn}
 				state={{
 					from: location.pathname,
+					search: location.search,
 				}}
 			/>
 		);

@@ -1,6 +1,5 @@
-import { Grid, Box } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import { Card } from './card';
-import { Pagination } from '../ui';
 import React, { ChangeEvent } from 'react';
 import { Product } from '../store/api/types';
 
@@ -15,15 +14,7 @@ interface Props {
 }
 
 export const CardList = (props: Props) => {
-	const {
-		mt,
-		mb,
-		products,
-		page,
-		handleChangePage,
-		pageCount,
-		renderFavButton,
-	} = props;
+	const { mt, mb, products, renderFavButton } = props;
 
 	const elements = products.map((it) => (
 		<Grid key={it._id} item xs={6} sm={4} md={3} lg={3}>
@@ -41,10 +32,6 @@ export const CardList = (props: Props) => {
 				direction='row'>
 				{elements}
 			</Grid>
-
-			<Box mt={5}>
-				<Pagination page={page} onChange={handleChangePage} count={pageCount} />
-			</Box>
 		</Box>
 	);
 };

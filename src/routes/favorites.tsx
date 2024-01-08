@@ -1,22 +1,23 @@
 import { CardList, PageHeader } from '../components';
-import { cardListData } from '../_data/card-list-data';
 import { FavButton } from '../components/fav-button';
-import { useUserProfileContext } from '../providers/user-provider';
 import { useState } from 'react';
 import { NotFound } from '../components/not-found';
-import { useActions } from '../store/hooks/hooks';
+import { useAppSelector } from '../store/hooks/hooks';
 import { Product } from '../store/api/types';
+import { getUserId } from '../store/selectors/selectors';
+import { useDeleteFromFavoritesMutation } from '../store/api/productsApi';
 
 const PAGE_SIZE = 12;
 
 export const Favorites = () => {
-	const { userId } = useUserProfileContext();
+	const userId = useAppSelector(getUserId);
 	const [page, setPage] = useState(1);
 
-	const { deleteFromFavorites } = useActions();
+	const [deleteToFavoritesRequestFn] = useDeleteFromFavoritesMutation();
 
-	const data = cardListData.filter((card) =>
-		card.likes.some((it) => it === userId)
+	// TODO нет api чтобы получать список избранных
+	const data = ([] as any[]).filter((card) =>
+		card.likes.some((it: any) => it === userId)
 	);
 
 	const handleChangePage = (
@@ -30,7 +31,7 @@ export const Favorites = () => {
 
 	const renderFavButton = (product: Product) => {
 		const toggleFav = () => {
-			deleteFromFavorites(product._id);
+			deleteToFavoritesRequestFn(product._id);
 		};
 		return <FavButton icon='common/ic-trash' onClick={toggleFav} />;
 	};

@@ -1,8 +1,9 @@
-import { Link, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { colors } from '../theme/colors';
 import styled from '@emotion/styled';
 import { SvgLoader } from '../ui';
 import { MouseEventHandler } from 'react';
+import { Link } from 'react-router-dom';
 
 interface Props {
 	to: string;
@@ -38,7 +39,7 @@ export const BackLink = (props: Props) => {
 	const { to, title, onClick } = props;
 
 	return (
-		<LinkStyled href={to} onClick={onClick}>
+		<LinkStyled to={to} onClick={onClick}>
 			<SvgLoader path='common/ic-left-arrow' display='inline-block' />
 			<Typography variant='p2' component='span' color={colors.text.secondary}>
 				{title}

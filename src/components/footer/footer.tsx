@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { colors } from '../../theme/colors';
 import { PageContainer, SvgLoader } from '../../ui';
 import { Logo } from '../logo';
-import { Stack, Typography, Link, AppBar, Toolbar } from '@mui/material';
+import { AppBar, Link, Stack, Toolbar, Typography } from '@mui/material';
 import { Link as ReactRouterLink } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -190,17 +190,17 @@ export const Footer = () => {
 				</Stack>
 
 				<Stack spacing={2.41625}>
-					<FooterLink to='\'>Каталог</FooterLink>
-					<FooterLink to='\'>Акции</FooterLink>
-					<FooterLink to='\'>Новости</FooterLink>
-					<FooterLink to='\'>Отзывы</FooterLink>
+					<FooterLink to='/'>Каталог</FooterLink>
+					<FooterLink to='/'>Акции</FooterLink>
+					<FooterLink to='/'>Новости</FooterLink>
+					<FooterLink to='/'>Отзывы</FooterLink>
 				</Stack>
 
 				<Stack spacing={2.41625}>
-					<FooterLink to='\'>Оплата и доставка</FooterLink>
-					<FooterLink to='\'>Часто спрашивают</FooterLink>
-					<FooterLink to='\'>Обратная связь</FooterLink>
-					<FooterLink to='\'>Контакты</FooterLink>
+					<FooterLink to='/'>Оплата и доставка</FooterLink>
+					<FooterLink to='/'>Часто спрашивают</FooterLink>
+					<FooterLink to='/'>Обратная связь</FooterLink>
+					<FooterLink to='/'>Контакты</FooterLink>
 				</Stack>
 
 				<Stack spacing={2}>

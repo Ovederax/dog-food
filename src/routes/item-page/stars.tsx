@@ -19,9 +19,9 @@ export const Stars = (props: { rating: number }) => {
 
 	const svgFillClassName = getFillClassName(colors.primary.darker);
 
-	const elements = stars.map((it) => (
+	const elements = stars.map((it, idx) => (
 		<SvgLoader
-			key={it}
+			key={idx}
 			className={`${svgSize20ClassName} ${svgFillClassName}`}
 			path={`common\\${it}`}
 		/>

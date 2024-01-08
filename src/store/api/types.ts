@@ -135,6 +135,11 @@ export interface ProductUpdateDto {
 	isPublished: boolean;
 }
 
+export interface ReviewCreateRequest {
+	productId: string;
+	body: ReviewCreateDto;
+}
+
 export interface ReviewCreateDto {
 	name: string;
 	city: string;
@@ -174,4 +179,9 @@ export interface UpdateProductParams {
 export interface DeleteReviewParams {
 	productId: string;
 	reviewId: string;
+}
+
+export interface Tokens {
+	accessToken: string;
+	refreshToken: string; // В нашем приложении refreshToken не используется. Немного упростим себе жизнь)
 }

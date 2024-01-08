@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { PageHeader } from '../../components';
 import { Stack, Typography } from '@mui/material';
 import FormInput from '../../ui/forms/form-input';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod/dist/zod';
-import { Button, Spinner } from '../../ui';
+import { Button } from '../../ui';
 import { object, string, TypeOf } from 'zod';
-import { useActions, useAppSelector } from '../../store/hooks/hooks';
 import { useNavigate, useParams } from 'react-router-dom';
 import FormRating from '../../ui/forms/form-rating';
-import { getProduct } from '../../store/selectors/selectors';
 import { getURLForCard } from '../../const/routes';
+import { useAddReviewMutation } from '../../store/api/productsApi';
 
 const formSchema = object({
 	name: string().min(1, 'Нужно заполнить поле'),
@@ -22,11 +21,9 @@ const formSchema = object({
 type FormType = TypeOf<typeof formSchema>;
 
 const AddReview = () => {
-	const { productId } = useParams();
-	const { addReview } = useActions();
-	const { loading, error } = useAppSelector(getProduct);
+	const { productId = '' } = useParams();
+	const [addReviewRequestFn, { isLoading }] = useAddReviewMutation();
 
-	const [waitResult, setWaitResult] = useState(false);
 	const navigate = useNavigate();
 
 	const formMethods = useForm<FormType>({
@@ -41,32 +38,19 @@ const AddReview = () => {
 	});
 
 	const onSubmitHandler: SubmitHandler<FormType> = (values: FormType) => {
-		setWaitResult(true);
 		const request = {
 			productId: productId || '',
-			dto: {
+			body: {
 				...values,
 				rating: Number(values.rating),
 			},
 		};
-		addReview(request);
+		addReviewRequestFn(request).then(() => {
+			navigate(getURLForCard(productId || ''));
+		});
 	};
 
-	useEffect(() => {
-		if (waitResult && !loading) {
-			navigate(getURLForCard(productId || ''));
-		}
-	}, [error, loading, navigate, productId, waitResult]);
-
 	const { handleSubmit } = formMethods;
-
-	if (loading) {
-		return <Spinner />;
-	}
-
-	if (error) {
-		return <>Error</>;
-	}
 
 	return (
 		<div>
@@ -99,7 +83,7 @@ const AddReview = () => {
 						<Typography sx={{ width: 160 }}>Рейтинг</Typography>
 						<FormRating name='rating' />
 					</Stack>
-					<Button type='submit' variant='outlined'>
+					<Button type='submit' variant='outlined' loading={isLoading}>
 						Отправить отзыв
 					</Button>
 				</Stack>

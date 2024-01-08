@@ -4,9 +4,15 @@ import { Stack, Typography } from '@mui/material';
 import { Stars } from './stars';
 import { colors } from '../../theme/colors';
 
+const padStart = (num: number) => {
+	return num.toString().padStart(2, '0');
+};
+
 const formatDate = (date: string) => {
 	const d = new Date(date);
-	return `${d.getDate()}.${d.getMonth()}.${d.getFullYear()}`;
+	return `${padStart(d.getDate())}.${padStart(
+		d.getMonth() + 1
+	)}.${d.getFullYear()}`;
 };
 
 const ReviewItem = (props: Review) => {

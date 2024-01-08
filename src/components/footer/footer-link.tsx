@@ -1,5 +1,6 @@
-import { Link, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { colors } from '../../theme/colors';
+import { Link } from 'react-router-dom';
 
 interface Props {
 	children: React.ReactNode;
@@ -10,7 +11,7 @@ export const FooterLink = (props: Props) => {
 	const { children, to } = props;
 
 	return (
-		<Link href={to} sx={{ textDecoration: 'none', display: 'flex' }}>
+		<Link to={to} style={{ textDecoration: 'none', display: 'flex' }}>
 			<Typography variant='s1' fontWeight={600} color={colors.text.main}>
 				{children}
 			</Typography>

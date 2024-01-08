@@ -1,15 +1,15 @@
-import React, { useLayoutEffect } from 'react';
-import { useActions, useAppSelector } from '../../store/hooks/hooks';
-import { getUser } from '../../store/selectors/selectors';
-import { Button, Spinner } from '../../ui';
+import React from 'react';
+import { Button } from '../../ui';
 import { object, string, TypeOf } from 'zod';
-import { SubmitHandler, useForm, FormProvider } from 'react-hook-form';
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod/dist/zod';
 import { Grid } from '@mui/material';
 import FormInput from '../../ui/forms/form-input';
 import { User } from '../../store/api/types';
 import { PageHeader } from '../../components';
 import { ROUTES } from '../../const/routes';
+import { useFetchMeQuery, useUpdateMeMutation } from '../../store/api/authApi';
+import { QueryComponent } from '../../utils/hoc/withQuery';
 
 const formSchema = object({
 	firstName: string().min(1, 'Нужно заполнить поле'),
@@ -20,8 +20,14 @@ const formSchema = object({
 
 type FormType = TypeOf<typeof formSchema>;
 
-const EditProfileForm = ({ userData }: { userData: User }) => {
-	const { updateMe } = useActions();
+interface Props {
+	userData: User;
+	refetchUserData: () => void;
+}
+
+const EditProfileForm = (props: Props) => {
+	const { userData, refetchUserData } = props;
+	const [updateMeRequestFn, { isLoading }] = useUpdateMeMutation();
 
 	const formMethods = useForm<FormType>({
 		mode: 'onChange',
@@ -37,10 +43,10 @@ const EditProfileForm = ({ userData }: { userData: User }) => {
 	const { handleSubmit } = formMethods;
 
 	const onSubmitHandler: SubmitHandler<FormType> = (values: FormType) => {
-		updateMe({
+		updateMeRequestFn({
 			name: `${values.firstName} ${values.lastName}`,
 			about: 'Info',
-		});
+		}).then(refetchUserData);
 	};
 
 	return (
@@ -66,7 +72,7 @@ const EditProfileForm = ({ userData }: { userData: User }) => {
 					<FormInput label='Почта' name='email' fullWidth />
 				</Grid>
 				<Grid item xs={12} sm={12} mt={1.5}>
-					<Button type='submit' variant='outlined'>
+					<Button type='submit' variant='outlined' loading={isLoading}>
 						Сохранить
 					</Button>
 				</Grid>
@@ -76,26 +82,23 @@ const EditProfileForm = ({ userData }: { userData: User }) => {
 };
 
 const EditProfilePage = () => {
-	const { loading, error, userData } = useAppSelector(getUser);
+	const { data, error, isLoading, isError, refetch } = useFetchMeQuery();
 
-	const { fetchMe } = useActions();
-
-	useLayoutEffect(() => {
-		fetchMe();
-	}, [fetchMe]);
-
-	if (loading || (!userData && !error)) {
-		return <Spinner />;
-	}
-
-	if (error || !userData) {
-		return <>Error</>;
+	if (isError || isLoading || !data) {
+		return (
+			<QueryComponent
+				isLoading={isLoading}
+				isError={isError}
+				refetch={refetch}
+				error={error}
+			/>
+		);
 	}
 
 	return (
 		<>
 			<PageHeader to={ROUTES.profile} backLabel='Назад' title='Мои данные' />
-			<EditProfileForm userData={userData} />
+			<EditProfileForm userData={data} refetchUserData={refetch} />
 		</>
 	);
 };

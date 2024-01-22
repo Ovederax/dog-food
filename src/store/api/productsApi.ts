@@ -18,6 +18,22 @@ export const productsApi = createApi({
 				url: '/products',
 				params,
 			}),
+			serializeQueryArgs: ({ endpointName, queryArgs }) => {
+				return endpointName + queryArgs.query;
+			},
+			// Always merge incoming data to the cache entry
+			merge: (currentCache, newItems, args) => {
+				if (args.arg.page === 1) {
+					currentCache.products = newItems.products;
+					currentCache.total = newItems.total;
+					return;
+				}
+				currentCache.products.push(...newItems.products);
+			},
+			// Refetch when the page arg changes
+			forceRefetch({ currentArg, previousArg }) {
+				return currentArg?.page !== previousArg?.page;
+			},
 		}),
 		getProductById: builder.query<Product, { productId: string }>({
 			query: ({ productId }) => ({

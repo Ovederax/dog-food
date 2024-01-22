@@ -8,9 +8,12 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { favoritesClassName } from '../../utils';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../routes';
-import { useProductsData } from '../../store/hooks/use-products-data';
 import { useAppSelector } from '../../store/hooks/hooks';
 import { getAccessToken } from '../../store/selectors/selectors';
+import {
+	useProductsDataHandlers,
+	useSearchQuery,
+} from '../../store/hooks/use-products-data';
 
 const Wrapper = styled.div`
 	background: ${colors.primary.main};
@@ -72,7 +75,8 @@ export const Header = () => {
 	const theme = useTheme();
 	const matchesDownMD = useMediaQuery(theme.breakpoints.down('md'));
 
-	const { searchValue, handeChangeSearch } = useProductsData();
+	const searchValue = useSearchQuery();
+	const { handeChangeSearch } = useProductsDataHandlers();
 
 	const accessToken = useAppSelector(getAccessToken);
 	const linkList = accessToken
@@ -84,7 +88,9 @@ export const Header = () => {
 			<Wrapper>
 				<Container direction='row' useFlexGap>
 					<Logo />
-					<Search value={searchValue} onChange={handeChangeSearch} />
+					{accessToken ? (
+						<Search value={searchValue} onChange={handeChangeSearch} />
+					) : null}
 
 					<Stack direction='row'>
 						{accessToken ? (
@@ -102,7 +108,9 @@ export const Header = () => {
 		<Wrapper>
 			<Container direction='row' useFlexGap>
 				<Logo />
-				<Search value={searchValue} onChange={handeChangeSearch} />
+				{accessToken ? (
+					<Search value={searchValue} onChange={handeChangeSearch} />
+				) : null}
 
 				<Stack direction='row' spacing={4.25}>
 					{linkList.map((it) => (

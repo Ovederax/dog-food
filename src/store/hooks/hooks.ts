@@ -7,6 +7,11 @@ import {
 	addToFavorites,
 	removeFromFavorite,
 } from '../slices/favorites-cache-slice';
+import {
+	incrementPage,
+	setPage,
+	setSortType,
+} from '../slices/search-params-slice';
 
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 type DispatchFunc = () => AppDispatch;
@@ -19,6 +24,10 @@ const rootActions = {
 	//
 	addToFavorites,
 	removeFromFavorite,
+	//
+	setPage,
+	incrementPage,
+	setSortType,
 };
 
 export const useActions = () => {

@@ -82,12 +82,12 @@ const EditProfileForm = (props: Props) => {
 };
 
 const EditProfilePage = () => {
-	const { data, error, isLoading, isError, refetch } = useFetchMeQuery();
+	const { data, error, isFetching, isError, refetch } = useFetchMeQuery();
 
-	if (isError || isLoading || !data) {
+	if (isError || isFetching || !data) {
 		return (
 			<QueryComponent
-				isLoading={isLoading}
+				isLoading={isFetching}
 				isError={isError}
 				refetch={refetch}
 				error={error}

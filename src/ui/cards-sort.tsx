@@ -5,7 +5,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import styled from '@emotion/styled';
 import { colors } from '../theme/colors';
-import { sortTypes, SortType } from '../_data/sort';
+import { SortType, sortTypes } from '../store/sort';
 import { elevation4 } from '../theme/elevation';
 
 const SortButton = styled('div')<{ selected: boolean }>(({ selected }) => {

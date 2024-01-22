@@ -1,38 +1,24 @@
-import { TypedUseSelectorHook, useSelector, useDispatch } from 'react-redux';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../store';
 import { useMemo } from 'react';
 import { bindActionCreators } from 'redux';
-import { fetchMe, updateMe, updateMeAvatar } from '../slices/users-slice';
-import {
-	addReview,
-	deleteReview,
-	getProductById,
-	getReviewByProduct,
-} from '../slices/products-details-slice';
+import { clearUser, setTokens, setUser } from '../slices/users-slice';
 import {
 	addToFavorites,
-	deleteFromFavorites,
-	getAllProducts,
-} from '../slices/products-slice';
+	removeFromFavorite,
+} from '../slices/favorites-cache-slice';
 
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 type DispatchFunc = () => AppDispatch;
 export const useAppDispatch: DispatchFunc = useDispatch;
 
 const rootActions = {
-	fetchMe,
-	updateMe,
-	updateMeAvatar,
-	//
-	getAllProducts,
+	setTokens,
+	setUser,
+	clearUser,
 	//
 	addToFavorites,
-	deleteFromFavorites,
-	//
-	getProductById,
-	addReview,
-	getReviewByProduct,
-	deleteReview,
+	removeFromFavorite,
 };
 
 export const useActions = () => {

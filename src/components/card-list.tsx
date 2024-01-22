@@ -18,7 +18,7 @@ export const CardList = (props: Props) => {
 
 	const elements = products.map((it) => (
 		<Grid key={it._id} item xs={6} sm={4} md={3} lg={3}>
-			<Card {...it} renderFavButton={renderFavButton} />
+			<Card product={it} renderFavButton={renderFavButton} />
 		</Grid>
 	));
 

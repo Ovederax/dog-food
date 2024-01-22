@@ -6,14 +6,20 @@ import { PageContainer, Search, SvgLoader } from '../../ui';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { favoritesClassName } from '../../utils';
-import { Link } from 'react-router-dom';
 import { ROUTES } from '../../routes';
 import { useAppSelector } from '../../store/hooks/hooks';
-import { getAccessToken } from '../../store/selectors/selectors';
+import {
+	getAccessToken,
+	getBasketItems,
+} from '../../store/selectors/selectors';
 import {
 	useProductsDataHandlers,
 	useSearchQuery,
 } from '../../store/hooks/use-products-data';
+import { SvgLink } from '../../ui/svg-link';
+import { useSelector } from 'react-redux';
+import { useMemo } from 'react';
+import { countProductsInBasket } from '../../utils/countProductsInBasket';
 
 const Wrapper = styled.div`
 	background: ${colors.primary.main};
@@ -32,41 +38,32 @@ const Container = styled(PageContainer)`
 	align-items: center;
 `;
 
-const SvgLink = (props: { to: string; path: string; className?: string }) => {
-	const { to, path, className } = props;
-	return (
-		<Link to={to}>
-			<SvgLoader path={path} className={className} />
-		</Link>
-	);
-};
-
-// Интерфейс для объекта-ссылки
 interface LinkObj {
 	path: string;
-	href: string;
+	to: string;
 	className?: string;
+	bubbleCount?: number;
 }
-// Набор ссылок, которые будут доступны АВТОРИЗИРОВАННЫМ пользователям
-const linkListForAuthorized: LinkObj[] = [
-	{
-		href: ROUTES.favorites,
-		path: 'common/ic-favorites',
-		className: favoritesClassName,
-	},
-	{
-		href: ROUTES.basket,
-		path: 'common/ic-cart',
-	},
-	{
-		href: ROUTES.profile,
-		path: 'special/ic-profile',
-	},
-];
-// Набор ссылок, которые будут доступны НЕАВТОРИЗИРОВАННЫМ пользователям
+
+const favLink = {
+	to: ROUTES.favorites,
+	path: 'common/ic-favorites',
+	className: favoritesClassName,
+};
+
+const cartLink = {
+	to: ROUTES.basket,
+	path: 'common/ic-cart',
+};
+
+const profileLink = {
+	to: ROUTES.profile,
+	path: 'special/ic-profile',
+};
+
 const linkListForNotAuthorized: LinkObj[] = [
 	{
-		href: ROUTES.signIn,
+		to: ROUTES.signIn,
 		path: 'common/ic-user',
 	},
 ];
@@ -77,11 +74,21 @@ export const Header = () => {
 
 	const searchValue = useSearchQuery();
 	const { handeChangeSearch } = useProductsDataHandlers();
+	const basketItems = useSelector(getBasketItems);
 
 	const accessToken = useAppSelector(getAccessToken);
-	const linkList = accessToken
-		? linkListForAuthorized
-		: linkListForNotAuthorized;
+	const linkList: LinkObj[] = useMemo(() => {
+		return accessToken
+			? [
+					favLink,
+					{
+						...cartLink,
+						bubbleCount: countProductsInBasket(basketItems),
+					},
+					profileLink,
+			  ]
+			: linkListForNotAuthorized;
+	}, [accessToken, basketItems]);
 
 	if (matchesDownMD) {
 		return (
@@ -96,7 +103,7 @@ export const Header = () => {
 						{accessToken ? (
 							<SvgLoader path='common/ic-menu' />
 						) : (
-							<SvgLink to={ROUTES.signIn} path={'common/ic-user'} />
+							<SvgLink to={ROUTES.signIn} path='common/ic-user' />
 						)}
 					</Stack>
 				</Container>
@@ -115,10 +122,11 @@ export const Header = () => {
 				<Stack direction='row' spacing={4.25}>
 					{linkList.map((it) => (
 						<SvgLink
-							key={it.href}
-							to={it.href}
+							key={it.to}
+							to={it.to}
 							path={it.path}
 							className={it.className}
+							bubbleCount={it.bubbleCount}
 						/>
 					))}
 				</Stack>

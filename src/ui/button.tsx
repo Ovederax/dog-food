@@ -4,7 +4,7 @@ import { colors } from '../theme/colors';
 import { Spinner } from './spinner';
 
 interface Props {
-	children: React.ReactElement | string;
+	children: React.ReactNode | string;
 	variant?: 'outlined' | 'contained';
 	sx?: SxProps<Theme>;
 	onClick?: () => void;

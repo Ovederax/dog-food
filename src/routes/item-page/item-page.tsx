@@ -8,17 +8,21 @@ import { css } from '@emotion/css';
 import { colors } from '../../theme/colors';
 import { formatPrice } from '../../utils';
 import { Miniatures } from './miniatures';
-import { ItemInfoBlock } from './item-info-block';
+import { ItemInfoBlock } from '../../components/info-block/item-info-block';
 import { ItemBlock } from './item-block';
 import { PropertiesTable } from './properties-table';
 import { CardBadge } from '../../components/card-badge';
-import { getUserId } from '../../store/selectors/selectors';
-import { useAppSelector } from '../../store/hooks/hooks';
+import { getBasketItems, getUserId } from '../../store/selectors/selectors';
+import { useActions, useAppSelector } from '../../store/hooks/hooks';
 import { Product, Review } from '../../store/api/types';
-import ReviewItem from './review-item';
 import { getURLForProductAddReview } from '../../const/routes';
 import { useGetProductByIdQuery } from '../../store/api/productsApi';
 import { withQuery } from '../../utils/hoc/withQuery';
+import ShipInfoBlock from '../../components/info-block/ship-info-block';
+import { BasketItem } from '../../store/slices/basket-slice';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import ReviewsList from './reviews-list';
 
 export const favoritesClassName = css`
 	& svg path:first-child {
@@ -42,13 +46,33 @@ interface ItemProps {
 const Item = (props: ItemProps) => {
 	const { id, product } = props;
 
+	const items: BasketItem[] = useSelector(getBasketItems);
+	const basketItem = items.find((it) => it.product._id === id);
 	const [count, setCount] = useState(0);
 	const userId = useAppSelector(getUserId);
+	const { addBasketItem } = useActions();
 
 	const navigate = useNavigate();
 
 	const onAddReview = () => {
 		navigate(getURLForProductAddReview(id || ''));
+	};
+
+	const addToBasket = () => {
+		const nowHave = basketItem?.count || 0;
+		if (!product) {
+			return;
+		}
+
+		if (count + nowHave > (product.stock || 0)) {
+			toast.error('Нельзя добавить! Недостаточно товара!');
+			return;
+		}
+		addBasketItem({
+			product,
+			count: count + nowHave,
+		});
+		setCount(0);
 	};
 
 	if (!product) {
@@ -87,8 +111,14 @@ const Item = (props: ItemProps) => {
 						</Typography>
 					</div>
 					<Stack direction='row' spacing={2}>
-						<Selector count={count} onChange={setCount} />
-						<Button sx={{ minWidth: 126 }}>В корзину</Button>
+						<Selector
+							count={count}
+							onChange={setCount}
+							max={Math.max(product.stock - (basketItem?.count || 0), 0)}
+						/>
+						<Button sx={{ minWidth: 126 }} onClick={addToBasket}>
+							В корзину {basketItem?.count ? `(${basketItem.count})` : ''}
+						</Button>
 					</Stack>
 
 					<Stack direction='row' spacing={1} sx={{ cursor: 'pointer' }}>
@@ -99,14 +129,7 @@ const Item = (props: ItemProps) => {
 						<Typography color={colors.text.secondary}>В избранное</Typography>
 					</Stack>
 
-					<ItemInfoBlock icon='common/ic-truck' title='Доставка по всему Миру!'>
-						<Typography variant='p2'>
-							Доставка курьером — <b>от 399 ₽</b>
-						</Typography>
-						<Typography variant='p2'>
-							Доставка в пункт выдачи — <b>от 199 ₽</b>
-						</Typography>
-					</ItemInfoBlock>
+					<ShipInfoBlock />
 
 					<ItemInfoBlock icon='common/ic-quality' title='Гарантия качества'>
 						<Typography variant='p2'>
@@ -131,13 +154,7 @@ const Item = (props: ItemProps) => {
 							Добавить отзыв
 						</Button>
 					)}
-					{product.reviews
-						.concat()
-						.reverse()
-						.slice(0, 3)
-						.map((it: Review) => (
-							<ReviewItem key={it._id} {...it} />
-						))}
+					<ReviewsList reviews={product.reviews} />
 				</ItemBlock>
 			</Stack>
 		</>

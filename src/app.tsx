@@ -1,22 +1,22 @@
 import './style.css';
 import {
-	RouterProvider,
 	createBrowserRouter,
 	Navigate,
+	RouterProvider,
 } from 'react-router-dom';
 import { PrivateLayout } from './ui';
 import { ThemeProvider } from '@mui/material';
 import { theme } from './theme/theme';
 import {
-	Favorites,
 	Catalog,
+	Favorites,
 	ItemPage,
-	Profile,
 	NotFoundPage,
+	Profile,
 	ROUTES,
 	SignUp,
 } from './routes';
-import { store } from './store/store';
+import { persistor, store } from './store/store';
 import { Provider } from 'react-redux';
 import EditProfilePage from './routes/profile/edit-profile-page';
 import AddReview from './routes/review/add-review';
@@ -24,6 +24,8 @@ import { SignLayout } from './ui/layout/sign-layout';
 import { SignIn } from './routes/sign/sign-in';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Basket } from './routes/basket/basket';
+import { PersistGate } from 'redux-persist/integration/react';
 
 const signRoutes = [
 	{
@@ -61,6 +63,10 @@ const catalogRoutes = {
 			element: <ItemPage />,
 		},
 		{
+			path: ROUTES.basket,
+			element: <Basket />,
+		},
+		{
 			path: ROUTES.productAddReview,
 			element: <AddReview />,
 		},
@@ -93,21 +99,23 @@ const router = createBrowserRouter([
 export const App = () => {
 	return (
 		<Provider store={store}>
-			<ThemeProvider theme={theme}>
-				<RouterProvider router={router} />
-			</ThemeProvider>
-			<ToastContainer
-				position='top-right'
-				autoClose={5000}
-				hideProgressBar={false}
-				newestOnTop={false}
-				closeOnClick
-				rtl={false}
-				pauseOnFocusLoss
-				draggable
-				pauseOnHover
-				theme='light'
-			/>
+			<PersistGate loading={null} persistor={persistor}>
+				<ThemeProvider theme={theme}>
+					<RouterProvider router={router} />
+				</ThemeProvider>
+				<ToastContainer
+					position='top-right'
+					autoClose={5000}
+					hideProgressBar={false}
+					newestOnTop={false}
+					closeOnClick
+					rtl={false}
+					pauseOnFocusLoss
+					draggable
+					pauseOnHover
+					theme='light'
+				/>
+			</PersistGate>
 		</Provider>
 	);
 };

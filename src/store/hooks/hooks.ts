@@ -12,6 +12,7 @@ import {
 	setPage,
 	setSortType,
 } from '../slices/search-params-slice';
+import { addBasketItem, removeFromBasket } from '../slices/basket-slice';
 
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 type DispatchFunc = () => AppDispatch;
@@ -28,6 +29,9 @@ const rootActions = {
 	setPage,
 	incrementPage,
 	setSortType,
+	//
+	addBasketItem,
+	removeFromBasket,
 };
 
 export const useActions = () => {

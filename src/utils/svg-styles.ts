@@ -28,6 +28,8 @@ export const pointerClassName = css`
 
 export const svgSize32ClassName = getSizeClassName(32);
 
+export const svgSize24ClassName = getSizeClassName(24);
+
 export const svgSize20ClassName = getSizeClassName(20);
 
 export const svgSize16ClassName = getSizeClassName(16);

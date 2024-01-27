@@ -1,12 +1,16 @@
 import styled from '@emotion/styled';
 import { colors } from '../theme/colors';
-import { Stack, Typography, Box } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
 import { getURLForCard } from '../const/routes';
 import { formatPrice } from '../utils';
 import { CardBadge } from './card-badge';
 import { Button } from '../ui';
 import { Product } from '../store/api/types';
+import { useActions, useAppSelector } from '../store/hooks/hooks';
+import { getBasketItems } from '../store/selectors/selectors';
+import { toast } from 'react-toastify';
+import { BasketItem } from '../store/slices/basket-slice';
 
 const Container = styled.div`
 	position: relative;
@@ -37,24 +41,44 @@ const TitleLinkStyled = styled(Link)`
 	}
 `;
 
-type Props = Product & {
+type Props = {
+	product: Product;
 	renderFavButton?: ((cardData: Product) => React.ReactNode) | undefined;
 };
 
 export const Card = (props: Props) => {
-	const { _id, discount, price, name, wight, pictures, renderFavButton } =
-		props;
+	const { product, renderFavButton } = props;
+	const { _id, discount, price, name, wight, pictures } = product;
 
+	const basketItems: BasketItem[] = useAppSelector(getBasketItems);
+	const { addBasketItem } = useActions();
 	const location = useLocation();
 	const linkState = { location };
 
 	const firstPrice = price + (price * discount) / 100;
 
+	const basketItem = basketItems.find((it) => it.product._id === product._id);
+
+	const onAddToBasket = () => {
+		if (product.stock === 0) {
+			toast.error('Нельзя добавить! Нет товара');
+			return;
+		}
+		if (basketItem && basketItem.count + 1 > product.stock) {
+			toast.error('Нельзя добавить! Вы забрали весь товар со складов!');
+			return;
+		}
+		addBasketItem({
+			product,
+			count: (basketItem?.count || 0) + 1,
+		});
+	};
+
 	return (
 		<Container>
 			<Box>
 				{discount ? <CardBadge>-{discount}%</CardBadge> : null}
-				{renderFavButton ? renderFavButton(props) : null}
+				{renderFavButton ? renderFavButton(props.product) : null}
 
 				<Image src={pictures} />
 
@@ -85,7 +109,9 @@ export const Card = (props: Props) => {
 			</Box>
 
 			<Box>
-				<Button>В корзину</Button>
+				<Button onClick={onAddToBasket}>
+					В корзину {basketItem?.count ? `(${basketItem.count})` : ''}
+				</Button>
 			</Box>
 		</Container>
 	);
